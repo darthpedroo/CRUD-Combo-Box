@@ -4,7 +4,7 @@ from persistance.db import getdb
 
 app = Flask(__name__)
 
-app.config['DB_HOST'] = 'localhost:3306'
+app.config['DB_HOST'] = 'localhost'
 app.config['DB_USER'] = 'root'
 app.config['DB_PASSWORD'] = 'i2i0L2aH1'
 app.config['DB_DATABASE'] = 'box'
