@@ -1,7 +1,9 @@
 """ Boilerin """
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from persistance.db import getdb
+from persistance.mysqlclienteDao import MySQLClienteDAO
+from persistance.storedProcedures import StoredProcedures
 
 app = Flask(__name__)
 
@@ -12,27 +14,20 @@ app.config['DB_DATABASE'] = 'box'
 
 
 def get_all_clients():
-    connection = getdb()
-    cursor = connection.cursor()  # ojito con esto
-    cursor.execute("SELECT RazonSocial FROM clientes")
-    results = cursor.fetchall()
-    cursor.close()
-    cleaned_results = [
-        x[0].strip() for x in results if x[0].strip()
-    ]
-    return cleaned_results
+
+    mysqlclienteDao = MySQLClienteDAO(getdb())
+    clientes = mysqlclienteDao.get_all_clients()
+    clean_clients = []
+    for cliente in clientes:
+        clean_clients.append(cliente.get_razon_social())
+        print(cliente.get_razon_social())
+    return clean_clients
 
 
 def get_productos_clientes_from_nombre(nombre: str):
-    connection = getdb()
-    cursor = connection.cursor()  # ojito con esto
-    cursor.execute(f"call box.producto_from_cliente_nombre('{nombre}')")
-    results = cursor.fetchall()
-    cursor.close()
-    cleaned_results = [
-        x[0].strip() for x in results if x[0].strip()
-    ]
-    return results
+    stored_procedures_clientes_from_nombre = StoredProcedures(getdb())
+    return stored_procedures_clientes_from_nombre.procedure_get_productos_clientes_from_nombre(
+        nombre)
 
 
 @app.route("/")
@@ -47,11 +42,17 @@ def seleccionar_cliente():
     return render_template("seleccionar-cliente.html", clientes=clientes)
 
 
-@app.route("/productos-cliente")
+@app.route("/productos-cliente", methods=["GET", "POST"])
 def productos_clientes_from_nombre():
-
-    productos_clientes = get_productos_clientes_from_nombre("Fender LLC")
-    return render_template("productos-clientes.html", productos_clientes=productos_clientes)
+    clientes = get_all_clients()
+    if request.method == "POST":
+        try:
+            nombre = request.form["nombre"]
+            productos_clientes = get_productos_clientes_from_nombre(nombre)
+            return render_template("productos-clientes.html", productos_clientes=productos_clientes, clientes=clientes,)
+        except Exception as ex:
+            print("boiler behaviour")
+    return render_template("productos-clientes.html", productos_clientes=[], clientes=clientes)
 
 
 if __name__ == '__main__':
