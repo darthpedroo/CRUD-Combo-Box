@@ -1,5 +1,6 @@
 """ Boilerin """
-from flask import Flask
+
+from flask import Flask, render_template
 from persistance.db import getdb
 
 app = Flask(__name__)
@@ -9,30 +10,48 @@ app.config['DB_USER'] = 'root'
 app.config['DB_PASSWORD'] = 'i2i0L2aH1'
 app.config['DB_DATABASE'] = 'box'
 
-@app.route("/")
-def home():
-<<<<<<< HEAD
-    items = ['Item 1', 'Item 2', 'Item 3']
-    clientes = ["db.get_clientes()"]
-    return render_template('index.html', username='John Doe', items=items)
 
-=======
-    """ Skibidin """
+def get_all_clients():
     connection = getdb()
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM ordenventacab")
+    cursor = connection.cursor()  # ojito con esto
+    cursor.execute("SELECT RazonSocial FROM clientes")
     results = cursor.fetchall()
     cursor.close()
-    return str(results)
->>>>>>> 003f7cb9c4647b651e5f50150b0d49909d6910d6
+    cleaned_results = [
+        x[0].strip() for x in results if x[0].strip()
+    ]
+    return cleaned_results
+
+
+def get_productos_clientes_from_nombre(nombre: str):
+    connection = getdb()
+    cursor = connection.cursor()  # ojito con esto
+    cursor.execute(f"call box.producto_from_cliente_nombre('{nombre}')")
+    results = cursor.fetchall()
+    cursor.close()
+    cleaned_results = [
+        x[0].strip() for x in results if x[0].strip()
+    ]
+    return results
+
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
 
 @app.route("/seleccionar-cliente")
 def seleccionar_cliente():
 
-    # clientes = db.get_clientes()
-    clientes = ["db.get_clientes()"]
-
+    clientes = get_all_clients()
     return render_template("seleccionar-cliente.html", clientes=clientes)
+
+
+@app.route("/productos-cliente")
+def productos_clientes_from_nombre():
+
+    productos_clientes = get_productos_clientes_from_nombre("Fender LLC")
+    return render_template("productos-clientes.html", productos_clientes=productos_clientes)
 
 
 if __name__ == '__main__':
