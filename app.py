@@ -12,6 +12,8 @@ app.config['DB_DATABASE'] = 'box'
 
 
 def get_all_clients():
+    """Obtiene todos los clientes"""
+
     connection = getdb()
     cursor = connection.cursor()  # ojito con esto
     cursor.execute("SELECT RazonSocial FROM clientes")
