@@ -15,13 +15,28 @@ app.config['DB_DATABASE'] = 'box'
 
 def get_all_clients():
 
-    mysqlclienteDao = MySQLClienteDAO(getdb())
-    clientes = mysqlclienteDao.get_all_clients()
-    clean_clients = []
-    for cliente in clientes:
+
+<< << << < HEAD
+
+mysqlclienteDao = MySQLClienteDAO(getdb())
+ clientes = mysqlclienteDao.get_all_clients()
+  clean_clients = []
+   for cliente in clientes:
         clean_clients.append(cliente.get_razon_social())
         print(cliente.get_razon_social())
     return clean_clients
+== == == =
+
+connection = getdb()
+ cursor = connection.cursor()  # ojito con esto
+  cursor.execute("SELECT RazonSocial FROM clientes")
+   results = cursor.fetchall()
+    cursor.close()
+    cleaned_results = [
+        x[0].strip() for x in results if x[0].strip()
+    ]
+    return cleaned_results
+>>>>>> > fd23d2c7d57ed37462d0ec6a16d2de2fa0415b89
 
 
 def get_productos_clientes_from_nombre(nombre: str):
