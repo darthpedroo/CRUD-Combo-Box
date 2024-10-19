@@ -1,0 +1,6 @@
+
+<select name="tipo_entrega">
+          {% for tipo in tipo_entregas %}
+            <option value="{{tipo.id_tipo_entrega}}">{{tipo.nombre_tipo_entrega}} // {{tipo.detalle}}</option>
+          {%endfor%}
+</select>

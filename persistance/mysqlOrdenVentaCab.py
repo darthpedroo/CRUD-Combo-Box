@@ -9,13 +9,17 @@ class MySQLOrdenVentaCab(OrdenVentaCabDao):
         self.connection = connection
 
     def get_all_orden_venta_cab(self):
-        cursor = self.connection.cursor(buffered=True)
+        if not self.connection or not self.connection.is_connected():
+            print("Connection not available; attempting to reconnect.")
+            self.connection = getdb()  # Re-establish the connection
+
+        cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM ordenventacab")
         rows = []
         while True:
             row = cursor.fetchone()
             if row is None:
-                break  # Stop when no more rows are found
+                break
             rows.append(OrdenVentaCab(*row))
         return rows
 

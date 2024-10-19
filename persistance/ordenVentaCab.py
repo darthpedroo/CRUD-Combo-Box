@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 class OrdenVentaCab:
-    def __init__(self, id_orden_venta: int, numero_orden: int, fecha: datetime, fecha_entrega: datetime, id_vendedor: int,
+    def __init__(self, id_orden_venta: int, numero_orden: int, fecha: str, fecha_entrega: str, id_vendedor: int,
                  id_cliente: int, tipo_entrega: int, tipo_pago: int, estado: int, subtotal: float, descuento: float, total: float, observaciones: str):
         self.id_orden_venta = id_orden_venta
         self.numero_orden = numero_orden

@@ -55,7 +55,12 @@ def productos_clientes_from_nombre():
         try:
             nombre = request.form["nombre"]
             productos_clientes = get_productos_clientes_from_nombre(nombre)
-            return render_template("crear-orden-venta.html", productos_clientes=productos_clientes, cliente=nombre)
+            connection = getdb()
+            stored_procedures = StoredProcedures(connection)
+            tipo_entregas = stored_procedures.get_all_tipos_entrega()
+            tipo_pagos = stored_procedures.get_all_tipos_pago()
+            vendedores = stored_procedures.get_all_vendedores()
+            return render_template("crear-orden-venta.html", productos_clientes=productos_clientes, cliente=nombre, tipo_entregas=tipo_entregas, tipo_pagos=tipo_pagos, vendedores=vendedores)
         except Exception as ex:
             print("boiler behaviour")
     return render_template("crear-orden-venta.html", productos_clientes=productos_clientes, cliente=nombre)
@@ -86,35 +91,39 @@ def crear_orden_venta():
     if request.method == "POST":
         try:
 
-            stored_procedures = StoredProcedures(getdb())
-            print("TIPOS DE ENTREGA: ", stored_procedures.get_all_tipos_entrega())
-
             id_cliente = request.form["id_cliente"]
-            # toilet = request.form["producto"] ESTO TDV NO HACE FALTA, TIENE QUE IR EN LOS DET
+            productos_clientes = get_productos_clientes_from_nombre("Mesa LLC")
+            tipo_entrega = request.form["tipo_entrega"]
+            tipo_pago = request.form["tipo_pago"]
+            id_vendedor = request.form["id_vendedor"]
+            observaciones = request.form["observaciones"]
             id_orden_venta = len(
                 my_sql_orden_ventas_cab.get_all_orden_venta_cab())+1
             numero_orden = len(
                 my_sql_orden_ventas_cab.get_all_orden_venta_cab())+1
-
             fecha_actual = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-            fecha_entrega = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-            id_vendedor = 1
+            fecha_entrega = None
+            id_vendedor = id_vendedor
             id_cliente = id_cliente
-            tipo_entrega = 1
-            tipo_pago = 1
+            tipo_entrega = tipo_entrega
+            tipo_pago = tipo_pago
             estado = 1
-            subtotal = 1
+            subtotal = 0
             descuento = 0
-            total = 10
-            observaciones = "i gyat myself"
+            total = 0
+            observaciones = observaciones
             orden_venta_cab = OrdenVentaCab(id_orden_venta, numero_orden, fecha_actual, fecha_entrega, id_vendedor,
                                             id_cliente, tipo_entrega, tipo_pago, estado, subtotal, descuento, total, observaciones)
             my_sql_orden_ventas_cab.create_orden_venta_cab(orden_venta_cab)
 
         except ValueError as ex:
             print("Ex:", ex)
-
-    return render_template("crear-orden-venta.html", clientes=clientes, )
+    connection = getdb()
+    stored_procedures = StoredProcedures(connection)
+    tipo_entregas = stored_procedures.get_all_tipos_entrega()
+    tipo_pagos = stored_procedures.get_all_tipos_pago()
+    vendedores = stored_procedures.get_all_vendedores()
+    return render_template("crear-orden-venta.html", clientes=clientes, productos_clientes=productos_clientes, tipo_entregas=tipo_entregas, tipo_pagos=tipo_pagos, vendedores=vendedores)
 
 
 if __name__ == '__main__':

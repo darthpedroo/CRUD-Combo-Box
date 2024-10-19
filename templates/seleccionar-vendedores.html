@@ -1,0 +1,6 @@
+
+<select name="id_vendedor">
+          {% for vendedor in vendedores %}
+            <option value="{{vendedor.id_empleado}}">{{vendedor.nombre}} // {{vendedor.apellido}}</option>
+          {%endfor%}
+</select>

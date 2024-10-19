@@ -9,10 +9,18 @@
 
 <form action="/crear-orden-venta" method="POST">
     
-    <input  name="capacidad_maxima" placeholder=" ingrese la capacidad_maxima">
+    <input  name="observaciones" placeholder="Ingrese sus observaciones">
     {% include 'productos-clientes.html'%}
-    <button type="submit" class="btn btn-danger">CREAR CAB :)</button>
+    {% include 'seleccionar-tipo-entrega.html'%}
+    {% include 'seleccionar-tipo-pago.html'%}
+    {% include 'seleccionar-vendedores.html'%}
     
+    <button type="submit" class="btn btn-danger">CREAR CAB :)</button>
 
 </form>
+
+<h1> Productos del cliente: </h1>
+{% include 'productos-clientes.html'%}
+
+
 {% endblock %}

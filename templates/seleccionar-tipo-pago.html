@@ -1,0 +1,5 @@
+<select name="tipo_pago">
+          {% for tipo_pago in tipo_pagos %}
+            <option value="{{tipo_pago.id}}">{{tipo_pago.nombre_tipo_pago}} // {{tipo_pago.detalle}}</option>
+          {%endfor%}
+</select>
