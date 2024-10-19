@@ -50,7 +50,6 @@ class StoredProcedures():
         )
         results = cursor.fetchall()
         cursor.close()
-        print("results: ", results)
         return [Vendedor(*row) for row in results]
 
     def get_receta_de_producto(self, producto: str):
@@ -62,17 +61,14 @@ class StoredProcedures():
         return [RecetaMaterialesProducto(*row) for row in results]
 
     def add_to_articulos_reservados(self, registro_receta_materiales: RecetaMaterialesProducto, cantidad_articulo_ingresado: int):
-        print("Test.", registro_receta_materiales.id_articulo)  # Check this value
-        input("Press Enter to continue...")  # Pause for inspection
-        cursor = self.connection.cursor(buffered=True)  # Use a buffered cursor
+
+        cursor = self.connection.cursor(buffered=True)
 
         cursor.execute(
             "SELECT MAX(idArticuloReservado) FROM articulosreservados;")
         max_id = cursor.fetchone()[0]
 
         new_id_articulo_reservado = (max_id + 1) if max_id is not None else 1
-
-        print(f"Inserting: idArticuloReservado={new_id_articulo_reservado}, idArticulo={registro_receta_materiales.id_articulo}, Cantidad={registro_receta_materiales.cantidad * cantidad_articulo_ingresado}, idReceta={registro_receta_materiales.id_receta_materiales}")
 
         cursor.execute(
             """
@@ -87,3 +83,42 @@ class StoredProcedures():
         )
 
         self.connection.commit()
+
+    def articulo_esta_disponible(self, registro:RecetaMaterialesProducto):
+        cursor = self.connection.cursor()
+        cursor.execute(
+            f"call box.Check_Stock_Articulo('{registro.id_articulo}')")
+        results = cursor.fetchall()
+        cursor.close()
+        if results[0][0] == 1:
+            return True
+        return False
+    
+    def get_max_idordenventasdet(self):
+        cursor = self.connection.cursor(buffered=True)
+        cursor.execute(
+            "SELECT MAX(idOrdenVentaDet) FROM ordenventadet;")
+        max_id = cursor.fetchone()[0]
+
+        new_idordenventasdet = (max_id + 1) if max_id is not None else 1
+        return new_idordenventasdet
+
+
+    def create_ventas_det(self, orden_venta_det):
+        cursor = self.connection.cursor(buffered=True)
+        cursor.execute(
+            """
+            INSERT INTO `box`.`ordenventadet` (`idOrdenVentaDet`, `idOrdenVenta`, `idProducto`, `Cant`, `Importe`, `PrecioUnitario`) VALUES (%s, %s, %s, %s, %s, %s);
+            """,
+            (
+                orden_venta_det.id_orden_venta_det,
+                orden_venta_det.id_orden_venta_cab,
+                orden_venta_det.id_producto,
+                orden_venta_det.cant,
+                orden_venta_det.precio_unitario,
+                orden_venta_det.importe
+                
+            )
+        )
+        
+        

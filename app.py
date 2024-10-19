@@ -1,12 +1,13 @@
 """ Module that contains flask application for purchase orders! """
 
 from datetime import datetime
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from persistance.db import getdb
 from persistance.mysqlclienteDao import MySQLClienteDAO
 from persistance.storedProcedures import StoredProcedures
 from persistance.mysqlOrdenVentaCab import MySQLOrdenVentaCab
 from persistance.ordenVentaCab import OrdenVentaCab
+from persistance.mysqlordenventadet import OrdenVentaDet
 
 app = Flask(__name__)
 
@@ -62,7 +63,7 @@ def productos_clientes_from_nombre():
             vendedores = stored_procedures.get_all_vendedores()
             return render_template("crear-orden-venta.html", productos_clientes=productos_clientes, cliente=nombre, tipo_entregas=tipo_entregas, tipo_pagos=tipo_pagos, vendedores=vendedores)
         except Exception as ex:
-            print("boiler behaviour")
+            print("WRONG")
     return render_template("crear-orden-venta.html", productos_clientes=productos_clientes, cliente=nombre)
 
 
@@ -79,7 +80,7 @@ def single_venta_cab(venta_id):
     single_venta_cab = ventas_cab.get_orden_venta_cab(venta_id)
 
     #cliente = MySQLClienteDAO(getdb())
-    #datos_cliente = cliente.get_cliente(1)  # HARDCODED VALUE, FIX IT!
+    #datos_cliente = cliente.get_cliente(1) # HARDCODED VALUE, FIX IT!
 
     return render_template("single-venta-cab.html", single_venta_cab=single_venta_cab)
 
@@ -91,6 +92,7 @@ def crear_orden_venta():
 
     if request.method == "POST":
         try:
+            troll_cantidad = []
             id_cliente = int(request.form["id_cliente"])
             productos_clientes = get_productos_clientes_from_nombre("Mesa LLC")
             tipo_entrega = int(request.form["tipo_entrega"])
@@ -108,31 +110,52 @@ def crear_orden_venta():
             subtotal = 0
             descuento = 0
             total = 0
-
-            orden_venta_cab = OrdenVentaCab(
-                id_orden_venta, numero_orden, fecha_actual, fecha_entrega, # type: ignore
-                id_vendedor, id_cliente, tipo_entrega, tipo_pago,
-                estado, subtotal, descuento, total, observaciones
-            )
-            my_sql_orden_ventas_cab.create_orden_venta_cab(orden_venta_cab)
+                        
             for producto in productos_clientes:
                 cantidad = request.form.get(
                     f'cantidad_{producto.id_producto}', 0)
                 cantidad = int(cantidad)  # Convert quantity to integer
+                troll_cantidad.append(cantidad)
+                print("QOS:", cantidad)
 
                 if cantidad > 0:
                     connection = getdb()
                     stored_procedures = StoredProcedures(connection)
                     lista_registros_receta_mats = stored_procedures.get_receta_de_producto(
                         producto.id_producto)
-
                     for registro in lista_registros_receta_mats:
-                        print("cac: ", registro.id_articulo)
-                        input("ca")
                         connection = getdb()
                         stored_procedures = StoredProcedures(connection)
-                        stored_procedures.add_to_articulos_reservados(
-                            registro, cantidad)
+                        if stored_procedures.articulo_esta_disponible(registro):
+                            stored_procedures.add_to_articulos_reservados(
+                                registro, cantidad)
+                        else: 
+                            return render_template("index.html")
+            
+            #Aca
+            orden_venta_cab = OrdenVentaCab(
+                id_orden_venta, numero_orden, fecha_actual, fecha_entrega, # type: ignore
+                id_vendedor, id_cliente, tipo_entrega, tipo_pago,
+                estado, subtotal, descuento, total, observaciones
+            )
+            
+            my_sql_orden_ventas_cab.create_orden_venta_cab(orden_venta_cab)
+            print("productos clientes", productos_clientes)
+            input("merac")
+
+            for index, producto in enumerate(productos_clientes):
+                cantidad = troll_cantidad[index]
+                print("trol", troll_cantidad)
+                print("cantidad, ", cantidad)
+                input("delmo")
+                if cantidad > 0:
+                    input("tobi")
+                    connection = getdb()
+                    stored_procedures = StoredProcedures(connection)
+                    id_venta_det = stored_procedures.get_max_idordenventasdet() +1
+                    orden_venta_det = OrdenVentaDet(id_venta_det, id_orden_venta, producto.id_producto, cantidad, producto.precio_unitario) # type: ignore
+                    stored_procedures.create_ventas_det(orden_venta_det)
+
         except ValueError as ex:
             print("Ex:", ex)
 
