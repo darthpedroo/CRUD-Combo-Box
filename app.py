@@ -1,4 +1,4 @@
-""" Boilerin """
+""" Module that contains flask application for purchase orders! """
 
 from datetime import datetime
 from flask import Flask, render_template, request
@@ -19,12 +19,12 @@ app.config['DB_DATABASE'] = 'box'
 def get_all_clients():
 
     connection = getdb()
-    cursor = connection.cursor()  # ojito con esto
+    cursor = connection.cursor()  # type: ignore ojito con esto
     cursor.execute("SELECT RazonSocial FROM clientes")
     results = cursor.fetchall()
     cursor.close()
     cleaned_results = [
-        x[0].strip() for x in results if x[0].strip()
+        x[0].strip() for x in results if x[0].strip() # type: ignore
     ]
     return cleaned_results
 
@@ -91,11 +91,11 @@ def crear_orden_venta():
 
     if request.method == "POST":
         try:
-            id_cliente = request.form["id_cliente"]
+            id_cliente = int(request.form["id_cliente"])
             productos_clientes = get_productos_clientes_from_nombre("Mesa LLC")
-            tipo_entrega = request.form["tipo_entrega"]
-            tipo_pago = request.form["tipo_pago"]
-            id_vendedor = request.form["id_vendedor"]
+            tipo_entrega = int(request.form["tipo_entrega"])
+            tipo_pago = int(request.form["tipo_pago"])
+            id_vendedor = int(request.form["id_vendedor"])
             observaciones = request.form["observaciones"]
 
             id_orden_venta = len(
@@ -103,7 +103,7 @@ def crear_orden_venta():
             numero_orden = len(
                 my_sql_orden_ventas_cab.get_all_orden_venta_cab()) + 1
             fecha_actual = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-            fecha_entrega = None
+            fecha_entrega = ""
             estado = 1
             subtotal = 0
             descuento = 0
