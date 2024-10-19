@@ -3,6 +3,7 @@ from persistance.cliente import Cliente
 from persistance.clienteDao import ClienteDAO
 from persistance.db import getdb
 from persistance.productosCliente import ProductoCLiente
+from persistance.tipoEntrega import TipoEntrega
 
 
 class StoredProcedures():
@@ -17,3 +18,13 @@ class StoredProcedures():
         cursor.close()
         print("results: ", results)
         return [ProductoCLiente(*row) for row in results]
+
+    def get_all_tipos_entrega(self):
+        cursor = self.connection.cursor()
+        cursor.execute(
+            """SELECT * FROM box.tiposentrega;"""
+        )
+        results = cursor.fetchall()
+        cursor.close()
+        print("results: ", results)
+        return [TipoEntrega(*row) for row in results]

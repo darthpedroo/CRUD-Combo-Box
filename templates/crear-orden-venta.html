@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>SALA MANAGER</h1>
+{% for sala in salas %}
+    <h1>{{sala._nombre}}</h1>
+{% endfor %}
+
+<form action="/crear-orden-venta" method="POST">
+    
+    <input  name="capacidad_maxima" placeholder=" ingrese la capacidad_maxima">
+    {% include 'productos-clientes.html'%}
+    <button type="submit" class="btn btn-danger">CREAR CAB :)</button>
+    
+
+</form>
+{% endblock %}

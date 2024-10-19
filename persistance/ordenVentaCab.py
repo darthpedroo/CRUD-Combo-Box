@@ -18,5 +18,5 @@ class OrdenVentaCab:
         self.total = total
         self.observaciones = observaciones
 
-    def __str__(self) -> str:
-        return str(self.numero_orden)
+   # def __str__(self) -> str:
+   #     return str(self.numero_orden)
