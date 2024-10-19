@@ -2,25 +2,76 @@
 
 {% block content %}
 
-<h1>SALA MANAGER</h1>
-{% for sala in salas %}
-    <h1>{{sala._nombre}}</h1>
-{% endfor %}
+<h1>Ventas Cab</h1>
 
-<form action="/crear-orden-venta" method="POST">
-    
-    <input  name="observaciones" placeholder="Ingrese sus observaciones">
-    {% include 'productos-clientes.html'%}
-    {% include 'seleccionar-tipo-entrega.html'%}
-    {% include 'seleccionar-tipo-pago.html'%}
-    {% include 'seleccionar-vendedores.html'%}
-    
-    <button type="submit" class="btn btn-danger">CREAR CAB :)</button>
+<form action="/crear-orden-venta" method="POST" id="ventas-cab-form">
+    <input name="observaciones" placeholder="Ingrese sus observaciones">
+    {% include 'productos-clientes.html' %}
+    {% include 'seleccionar-tipo-entrega.html' %}
+    {% include 'seleccionar-tipo-pago.html' %}
+    {% include 'seleccionar-vendedores.html' %}
 
+    <!-- Hidden inputs for product quantities -->
+    <div id="hidden-inputs"></div>
+
+    <button type="submit" class="btn btn-danger" id="crear-venta-cab">
+        CREAR CAB :)
+    </button>
 </form>
 
-<h1> Productos del cliente: </h1>
-{% include 'productos-clientes.html'%}
+<h1>Ventas Det:</h1>
+<form id="venta-det-form">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID Producto</th>
+                <th>Nombre Producto</th>
+                <th>Precio Unitario</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos_clientes %}
+            <tr>
+                <td>{{ producto.id_producto }}</td>
+                <td>{{ producto.nombre_producto }}</td>
+                <td>{{ producto.precio_unitario }}</td>
+                <td>
+                    <input type="number" name="cantidad_{{ producto.id_producto }}" min="0" value="0" placeholder="Cantidad del producto a ingresar" class="cantidad-input">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
 
+<script>
+document.getElementById('crear-venta-cab').addEventListener('click', function(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Clear any existing hidden inputs
+    const hiddenInputsContainer = document.getElementById('hidden-inputs');
+    hiddenInputsContainer.innerHTML = '';
+
+    // Gather quantities from "Ventas Det"
+    document.querySelectorAll('.cantidad-input').forEach(input => {
+        const productId = input.name.split('_')[1]; // Extract the product ID from the name
+        const quantity = input.value; // Get the quantity input value
+
+        // Only add hidden input if quantity is greater than 0
+        if (quantity > 0) {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = `cantidad_${productId}`;
+            hiddenInput.value = quantity;
+            hiddenInputsContainer.appendChild(hiddenInput);
+        }
+    });
+
+    // Submit the form
+    document.getElementById('ventas-cab-form').submit();
+});
+</script>
 
 {% endblock %}

@@ -88,36 +88,54 @@ def single_venta_cab(venta_id):
 def crear_orden_venta():
     my_sql_orden_ventas_cab = MySQLOrdenVentaCab(getdb())
     clientes = get_all_clients()
+
     if request.method == "POST":
         try:
-
             id_cliente = request.form["id_cliente"]
             productos_clientes = get_productos_clientes_from_nombre("Mesa LLC")
             tipo_entrega = request.form["tipo_entrega"]
             tipo_pago = request.form["tipo_pago"]
             id_vendedor = request.form["id_vendedor"]
             observaciones = request.form["observaciones"]
+
             id_orden_venta = len(
-                my_sql_orden_ventas_cab.get_all_orden_venta_cab())+1
+                my_sql_orden_ventas_cab.get_all_orden_venta_cab()) + 1
             numero_orden = len(
-                my_sql_orden_ventas_cab.get_all_orden_venta_cab())+1
+                my_sql_orden_ventas_cab.get_all_orden_venta_cab()) + 1
             fecha_actual = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
             fecha_entrega = None
-            id_vendedor = id_vendedor
-            id_cliente = id_cliente
-            tipo_entrega = tipo_entrega
-            tipo_pago = tipo_pago
             estado = 1
             subtotal = 0
             descuento = 0
             total = 0
-            observaciones = observaciones
-            orden_venta_cab = OrdenVentaCab(id_orden_venta, numero_orden, fecha_actual, fecha_entrega, id_vendedor,
-                                            id_cliente, tipo_entrega, tipo_pago, estado, subtotal, descuento, total, observaciones)
-            my_sql_orden_ventas_cab.create_orden_venta_cab(orden_venta_cab)
 
+            orden_venta_cab = OrdenVentaCab(
+                id_orden_venta, numero_orden, fecha_actual, fecha_entrega,
+                id_vendedor, id_cliente, tipo_entrega, tipo_pago,
+                estado, subtotal, descuento, total, observaciones
+            )
+            my_sql_orden_ventas_cab.create_orden_venta_cab(orden_venta_cab)
+            for producto in productos_clientes:
+                cantidad = request.form.get(
+                    f'cantidad_{producto.id_producto}', 0)
+                cantidad = int(cantidad)  # Convert quantity to integer
+
+                if cantidad > 0:
+                    connection = getdb()
+                    stored_procedures = StoredProcedures(connection)
+                    lista_registros_receta_mats = stored_procedures.get_receta_de_producto(
+                        producto.id_producto)
+
+                    for registro in lista_registros_receta_mats:
+                        print("cac: ", registro.id_articulo)
+                        input("ca")
+                        connection = getdb()
+                        stored_procedures = StoredProcedures(connection)
+                        stored_procedures.add_to_articulos_reservados(
+                            registro, cantidad)
         except ValueError as ex:
             print("Ex:", ex)
+
     connection = getdb()
     stored_procedures = StoredProcedures(connection)
     tipo_entregas = stored_procedures.get_all_tipos_entrega()
