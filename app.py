@@ -78,8 +78,8 @@ def single_venta_cab(venta_id):
     ventas_cab = MySQLOrdenVentaCab(getdb())
     single_venta_cab = ventas_cab.get_orden_venta_cab(venta_id)
 
-    cliente = MySQLClienteDAO(getdb())
-    datos_cliente = cliente.get_cliente(1)  # HARDCODED VALUE, FIX IT!
+    #cliente = MySQLClienteDAO(getdb())
+    #datos_cliente = cliente.get_cliente(1)  # HARDCODED VALUE, FIX IT!
 
     return render_template("single-venta-cab.html", single_venta_cab=single_venta_cab)
 
@@ -103,14 +103,14 @@ def crear_orden_venta():
             numero_orden = len(
                 my_sql_orden_ventas_cab.get_all_orden_venta_cab()) + 1
             fecha_actual = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-            fecha_entrega = ""
+            fecha_entrega = None
             estado = 1
             subtotal = 0
             descuento = 0
             total = 0
 
             orden_venta_cab = OrdenVentaCab(
-                id_orden_venta, numero_orden, fecha_actual, fecha_entrega,
+                id_orden_venta, numero_orden, fecha_actual, fecha_entrega, # type: ignore
                 id_vendedor, id_cliente, tipo_entrega, tipo_pago,
                 estado, subtotal, descuento, total, observaciones
             )
