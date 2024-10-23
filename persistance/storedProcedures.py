@@ -62,7 +62,7 @@ class StoredProcedures():
 
     def add_to_articulos_reservados(self, registro_receta_materiales: RecetaMaterialesProducto, cantidad_articulo_ingresado: int):
 
-        cursor = self.connection.cursor(buffered=True)
+        cursor = self.connection.cursor(buffered=True) #ESTO TIRA WRONG MEGA ERROR !
 
         cursor.execute(
             "SELECT MAX(idArticuloReservado) FROM articulosreservados;")
@@ -90,7 +90,7 @@ class StoredProcedures():
             f"call box.Check_Stock_Articulo('{registro.id_articulo}')")
         results = cursor.fetchall()
         cursor.close()
-        if results[0][0] == 1:
+        if results[0][1] == 1:
             return True
         return False
     

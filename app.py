@@ -94,7 +94,7 @@ def crear_orden_venta():
         try:
             troll_cantidad = []
             id_cliente = int(request.form["id_cliente"])
-            productos_clientes = get_productos_clientes_from_nombre("Mesa LLC")
+            productos_clientes = get_productos_clientes_from_nombre("Fender LLC")
             tipo_entrega = int(request.form["tipo_entrega"])
             tipo_pago = int(request.form["tipo_pago"])
             id_vendedor = int(request.form["id_vendedor"])
@@ -113,26 +113,25 @@ def crear_orden_venta():
                         
             for producto in productos_clientes:
                 cantidad = request.form.get(
-                    f'cantidad_{producto.id_producto}', 0)
-                cantidad = int(cantidad)  # Convert quantity to integer
-                troll_cantidad.append(cantidad)
-                print("QOS:", cantidad)
+                    f'cantidad_{producto.id_producto}')
+                if cantidad is not None:
+                    cantidad = int(cantidad)  # Convert quantity to integer
+                    troll_cantidad.append(cantidad)
 
-                if cantidad > 0:
-                    connection = getdb()
-                    stored_procedures = StoredProcedures(connection)
-                    lista_registros_receta_mats = stored_procedures.get_receta_de_producto(
-                        producto.id_producto)
-                    for registro in lista_registros_receta_mats:
+                    if cantidad > 0:
                         connection = getdb()
                         stored_procedures = StoredProcedures(connection)
-                        if stored_procedures.articulo_esta_disponible(registro):
-                            stored_procedures.add_to_articulos_reservados(
-                                registro, cantidad)
-                        else: 
-                            return render_template("index.html")
+                        lista_registros_receta_mats = stored_procedures.get_receta_de_producto(
+                            producto.id_producto)
+                        for registro in lista_registros_receta_mats:
+                            connection = getdb()
+                            stored_procedures = StoredProcedures(connection)
+                            if stored_procedures.articulo_esta_disponible(registro):
+                                stored_procedures.add_to_articulos_reservados(
+                                    registro, cantidad)
+                            else: 
+                                return render_template("youtube.com")
             
-            #Aca
             orden_venta_cab = OrdenVentaCab(
                 id_orden_venta, numero_orden, fecha_actual, fecha_entrega, # type: ignore
                 id_vendedor, id_cliente, tipo_entrega, tipo_pago,
@@ -145,18 +144,14 @@ def crear_orden_venta():
 
             for index, producto in enumerate(productos_clientes):
                 cantidad = troll_cantidad[index]
-                print("trol", troll_cantidad)
-                print("cantidad, ", cantidad)
-                input("delmo")
                 if cantidad > 0:
-                    input("tobi")
                     connection = getdb()
                     stored_procedures = StoredProcedures(connection)
                     id_venta_det = stored_procedures.get_max_idordenventasdet() +1
                     orden_venta_det = OrdenVentaDet(id_venta_det, id_orden_venta, producto.id_producto, cantidad, producto.precio_unitario) # type: ignore
                     stored_procedures.create_ventas_det(orden_venta_det)
 
-        except ValueError as ex:
+        except ArithmeticError as ex:
             print("Ex:", ex)
 
     connection = getdb()
