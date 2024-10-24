@@ -1,0 +1,33 @@
+<h3>Ventas del Cliente: {{ productos_clientes[0].id_cliente }}</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID Producto</th>
+            <th>Nombre Producto</th>
+            <th>Precio Unitario</th>
+            <th>Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producto in productos_clientes %}
+        <tr>
+            <td>{{ producto.id_producto }}</td>
+            <td>{{ producto.nombre_producto }}</td>
+            <td>{{ producto.precio_unitario }}</td>
+            <td>
+                <input type="number" name="cantidad_{{ producto.id_producto }}" min="0" value="0" placeholder="Cantidad del producto a ingresar" class="cantidad-input">
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    document.querySelectorAll('.cantidad-input').forEach(input => {
+        input.addEventListener('input', function() {
+            const selectedProduct = document.getElementById('producto-select');
+            selectedProduct.value = this.name.split('_')[1]; // Update selected product based on input
+        });
+    });
+</script>

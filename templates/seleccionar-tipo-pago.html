@@ -1,0 +1,9 @@
+<div class="max-w-2xl mx-auto p-4 bg-white rounded-lg shadow-md mt-10">
+  <label for="tipo_pago" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Seleccionar Tipo de Pago</label>
+  <select name="tipo_pago" id="tipo_pago" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <option value="" disabled selected>-- Seleccione un tipo de pago --</option>
+      {% for tipo_pago in tipo_pagos %}
+          <option value="{{ tipo_pago.id }}">{{ tipo_pago.nombre_tipo_pago }} // {{ tipo_pago.detalle }}</option>
+      {% endfor %}
+  </select>
+</div>

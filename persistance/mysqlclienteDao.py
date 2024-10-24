@@ -11,7 +11,7 @@ class MySQLClienteDAO(ClienteDAO):
     def get_cliente(self, cliente_id: int):
         cursor = self.connection.cursor()
         cursor.execute(
-            "SELECT * FROM clientes WHERE idCliente = ?", (cliente_id,))
+            "SELECT * FROM clientes WHERE idCliente = %s", (cliente_id,))
         row = cursor.fetchone()
         return Cliente(*row) if row else None
 

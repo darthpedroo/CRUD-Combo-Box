@@ -1,0 +1,102 @@
+{%extends 'base.html' %}
+{%block content%}
+
+<section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+  <form action="#" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+        <div class="mx-auto max-w-3xl">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Venta Número: {{single_venta_cab[0].numero_orden}}</h2>
+
+      <div class="mt-6 space-y-4 border-b border-t border-gray-200 py-8 dark:border-gray-700 sm:mt-8">
+        <h4 class="text-lg font-semibold text-gray-900 dark:text-white">Informe de Venta</h4>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+          
+          <div class="flex justify-between">
+            <dt class="text-base font-medium text-gray-900 dark:text-white">Cliente</dt>
+            <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">{{ cliente[0].razon_social }}</dd>
+          </div>
+      
+          <div class="flex justify-between">
+            <dt class="text-base font-medium text-gray-900 dark:text-white">Teléfono</dt>
+            <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">{{ cliente[0].tel_1 }}</dd>
+          </div>
+      
+          <div class="flex justify-between">
+            <dt class="text-base font-medium text-gray-900 dark:text-white">Correo Electrónico</dt>
+            <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">{{ cliente[0].correo }}</dd>
+          </div>
+      
+          <div class="flex justify-between">
+            <dt class="text-base font-medium text-gray-900 dark:text-white">Dirección</dt>
+            <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">{{ cliente[0].calle }} {{ cliente[0].calle_nro }}</dd>
+          </div>
+      
+          <div class="flex justify-between">
+            <dt class="text-base font-medium text-gray-900 dark:text-white">Localidad</dt>
+            <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">{{ cliente[0].localidad }}</dd>
+          </div>
+      
+        </dl>
+      </div> 
+
+      <div class="mt-6 sm:mt-8">
+        <div class="relative overflow-x-auto border-b border-gray-200 dark:border-gray-800">
+          <table class="w-full text-left font-medium text-gray-900 dark:text-white md:table-fixed">
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+              
+              {%for detalle in ventas_det%}
+              <tr>
+                <td class="whitespace-nowrap py-4 md:w-[384px]">
+                  <div class="flex items-center gap-4">
+                    <a href="#" class="flex items-center aspect-square w-10 h-10 shrink-0">
+                      <img class="h-auto w-full max-h-full dark:hidden" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg" alt="imac image" />
+                      <img class="hidden h-auto w-full max-h-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="imac image" />
+                    </a>
+                    <a href="#" class="hover:underline">{{detalle.id_producto}}</a>
+                  </div>
+                </td>
+                <td class="p-4 text-base font-normal text-gray-900 dark:text-white">x{{detalle.cant}}</td>
+                <td class="p-4 text-right text-base font-bold text-gray-900 dark:text-white">C/U: {{detalle.precio_unitario}}</td>
+                <td class="p-4 text-right text-base font-bold text-gray-900 dark:text-white">Total: {{detalle.precio_unitario * detalle.cant}}</td>
+              </tr>
+
+              {%endfor%}
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-4 space-y-6">
+          <h4 class="text-xl font-semibold text-gray-900 dark:text-white">Order summary</h4>
+
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <dl class="flex items-center justify-between gap-4">
+                <dt class="text-gray-500 dark:text-gray-400">Subtotal</dt>
+                <dd class="text-base font-medium text-gray-900 dark:text-white">${{single_venta_cab[0].subtotal}}</dd>
+              </dl>
+
+              <dl class="flex items-center justify-between gap-4">
+                <dt class="text-gray-500 dark:text-gray-400">Tipo de Pago</dt>
+                <dd class="text-base font-medium text-green-500">{{tipo_pago[0].nombre_tipo_pago}}</dd>
+                <dd class="text-base font-medium text-green-500">{{tipo_pago[0].detalle}}</dd>
+              </dl>
+
+              <dl class="flex items-center justify-between gap-4">
+                <dt class="text-gray-500 dark:text-gray-400">Tipo de Entrega</dt>
+                <dd class="text-base font-medium text-green-500">{{tipo_entrega[0].nombre_tipo_entrega}}</dd>
+                <dd class="text-base font-medium text-green-500">{{tipo_entrega[0].detalle}}</dd>
+              </dl>
+
+            <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
+              <dt class="text-lg font-bold text-gray-900 dark:text-white">Total</dt>
+              <dd class="text-lg font-bold text-gray-900 dark:text-white">{{single_venta_cab[0].total}}</dd>
+            </dl>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</section>
+
+{%endblock%}
