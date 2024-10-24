@@ -2,11 +2,11 @@
 from persistance.cliente import Cliente
 from persistance.clienteDao import ClienteDAO
 from persistance.db import getdb
-from persistance.productosCliente import ProductoCLiente
+from persistance.productosCliente import ProductoCliente
 from persistance.tipoEntrega import TipoEntrega
 from persistance.TipoPago import TipoPago
 from persistance.vendedor import Vendedor
-from persistance.productosCliente import ProductoCLiente
+from persistance.productosCliente import ProductoCliente
 from persistance.RecetaMaterialesProducto import RecetaMaterialesProducto
 from persistance.mysqlordenventadet import OrdenVentaDet
 
@@ -22,7 +22,7 @@ class StoredProcedures():
         results = cursor.fetchall()
         cursor.close()
         print("results: ", results)
-        return [ProductoCLiente(*row) for row in results]
+        return [ProductoCliente(*row) for row in results]
 
     def get_all_tipos_entrega(self):
         cursor = self.connection.cursor()
@@ -33,11 +33,12 @@ class StoredProcedures():
         cursor.close()
         print("results: ", results)
         return [TipoEntrega(*row) for row in results]
-    
-    def get_tipo_entrega_name_from_id(self, id_tipo_entrega:int ):
+
+    def get_tipo_entrega_name_from_id(self, id_tipo_entrega: int):
         cursor = self.connection.cursor()
         cursor.execute(
-            f"""SELECT * FROM box.tiposentrega WHERE idTipoEntrega = {id_tipo_entrega} ;"""
+            f"""SELECT * FROM box.tiposentrega WHERE idTipoEntrega = {
+                id_tipo_entrega} ;"""
         )
         results = cursor.fetchall()
         cursor.close()
@@ -53,11 +54,12 @@ class StoredProcedures():
         cursor.close()
         print("results: ", results)
         return [TipoPago(*row) for row in results]
-    
+
     def get_tipo_pago_name_from_id(self, id_tipo_pago: int):
         cursor = self.connection.cursor()
         cursor.execute(
-            f"""SELECT * FROM box.tipospago WHERE idTipoPago = {id_tipo_pago} ;"""
+            f"""SELECT * FROM box.tipospago WHERE idTipoPago = {
+                id_tipo_pago} ;"""
         )
         results = cursor.fetchall()
         cursor.close()
@@ -73,15 +75,16 @@ class StoredProcedures():
         cursor.close()
         return [Vendedor(*row) for row in results]
 
-    def get_all_ventas_det(self, id_orden_venta_cab:int):
+    def get_all_ventas_det(self, id_orden_venta_cab: int):
         cursor = self.connection.cursor()
         cursor.execute(
-           f"""SELECT * FROM box.ordenventadet where idOrdenVenta ={id_orden_venta_cab};"""
+            f"""SELECT * FROM box.ordenventadet where idOrdenVenta ={
+                id_orden_venta_cab};"""
         )
         results = cursor.fetchall()
         cursor.close()
         return [OrdenVentaDet(*row) for row in results]
-    
+
     def get_all_orden_venta_cab_ids(self):
         cursor = self.connection.cursor()
         cursor.execute(
@@ -90,7 +93,7 @@ class StoredProcedures():
         results = cursor.fetchall()
         cursor.close()
         return [row[0] for row in results]
-    
+
     def get_receta_de_producto(self, producto: str):
         cursor = self.connection.cursor()
         cursor.execute(
@@ -101,7 +104,7 @@ class StoredProcedures():
 
     def add_to_articulos_reservados(self, registro_receta_materiales: RecetaMaterialesProducto, cantidad_articulo_ingresado: int):
 
-        cursor = self.connection.cursor(buffered=True) #ESTO TIRA WRONG MEGA ERROR !
+        cursor = self.connection.cursor(buffered=True)
 
         cursor.execute(
             "SELECT MAX(idArticuloReservado) FROM articulosreservados;")
@@ -123,7 +126,7 @@ class StoredProcedures():
 
         self.connection.commit()
 
-    def articulo_esta_disponible(self, registro:RecetaMaterialesProducto, cantidad:int):
+    def articulo_esta_disponible(self, registro: RecetaMaterialesProducto, cantidad: int):
         cursor = self.connection.cursor()
         cursor.execute(
             f"call box.Check_Stock_Articulo('{registro.id_articulo}','{cantidad}')")
@@ -132,7 +135,17 @@ class StoredProcedures():
         if results[0][1] == 1:
             return True
         return False
-    
+
+    def producto_tiene_receta_de_materiales(self, producto: ProductoCliente):
+        cursor = self.connection.cursor()
+        cursor.execute(
+            f"call box.producto_tiene_receta_de_materiales('{producto.get_id_producto}')")
+        results = cursor.fetchall()
+        cursor.close()
+        if results[0][1] == 1:
+            return True
+        return False
+
     def get_max_idordenventasdet(self):
         cursor = self.connection.cursor(buffered=True)
         cursor.execute(

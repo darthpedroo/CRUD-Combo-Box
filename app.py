@@ -50,7 +50,22 @@ def productos_clientes_from_nombre():
     if request.method == "POST":
         try:
             nombre = request.form["nombre"]
-            productos_clientes = get_productos_clientes_from_nombre(nombre)
+            
+            todos_los_productos_clientes = get_productos_clientes_from_nombre(nombre)
+            productos_clientes = []
+            for producto in todos_los_productos_clientes:
+                connection = getdb()
+                stored_procedures = StoredProcedures(connection)
+
+                if stored_procedures.producto_tiene_receta_de_materiales(producto):
+                    productos_clientes.append(producto)
+
+            
+            if len(productos_clientes) == 0:
+                ex = "SU CLIENTE NO TIENE NINGUN PRODUCTO CON RECETA DE MATERIALES!. PRUEBE CON OTRO"
+                return render_template('error.html', ex=ex)
+                
+            
             connection = getdb()
             stored_procedures = StoredProcedures(connection)
             tipo_entregas = stored_procedures.get_all_tipos_entrega()
@@ -79,7 +94,7 @@ def ordenes():
 def single_venta_cab():
     venta_id = request.args.get("venta_id")
     if not venta_id:
-        return redirect(url_for('home'))  # or handle the error as needed
+        return redirect(url_for('home'))  
 
     try:
         venta_id = int(venta_id)  # Convert to int
@@ -120,8 +135,7 @@ def crear_orden_venta():
             
             
             productos_clientes = get_productos_clientes_from_nombre(nombre_cliente)
-            print("PRODUCTOS_CLIENTE:", productos_clientes)
-            input("i got a picture im coming with you")
+            
             tipo_entrega = int(request.form["tipo_entrega"])
             tipo_pago = int(request.form["tipo_pago"])
             id_vendedor = int(request.form["id_vendedor"])
