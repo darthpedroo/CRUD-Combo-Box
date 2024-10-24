@@ -2,63 +2,63 @@
 
 {% block content %}
 
-<h1>Ventas Cab</h1>
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Ventas Cab</h1>
 
-<!-- Combine the forms into one -->
-<form action="/crear-orden-venta" method="POST" id="ventas-cab-form">
-    <input name="observaciones" placeholder="Ingrese sus observaciones">
-    {% include 'productos-clientes.html' %}
-    {% include 'seleccionar-tipo-entrega.html' %}
-    {% include 'seleccionar-tipo-pago.html' %}
-    {% include 'seleccionar-vendedores.html' %}
+    <form action="/crear-orden-venta" method="POST" id="ventas-cab-form" class="bg-white shadow-md rounded p-6">
+        <div class="mb-4">
+            <input name="observaciones" placeholder="Ingrese sus observaciones" class="border rounded w-full p-2" required>
+        </div>
+        {% include 'productos-clientes.html' %}
+        {% include 'seleccionar-tipo-entrega.html' %}
+        {% include 'seleccionar-tipo-pago.html' %}
+        {% include 'seleccionar-vendedores.html' %}
 
-    <h1>Ventas Det:</h1>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID Producto</th>
-                <th>Nombre Producto</th>
-                <th>Precio Unitario</th>
-                <th>Cantidad</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for producto in productos_clientes %}
-            <tr>
-                <td>{{ producto.id_producto }}</td>
-                <td>{{ producto.nombre_producto }}</td>
-                <td>{{ producto.precio_unitario }}</td>
-                <td>
-                    <input type="number" name="cantidad_{{producto.id_producto}}" min="0" value="0" placeholder="Cantidad del producto a ingresar" class="cantidad-input">
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <h2 class="text-xl font-semibold mt-6 mb-2">Ventas Det:</h2>
+        <table class="table-auto w-full border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2">ID Producto</th>
+                    <th class="px-4 py-2">Nombre Producto</th>
+                    <th class="px-4 py-2">Precio Unitario</th>
+                    <th class="px-4 py-2">Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos_clientes %}
+                <tr>
+                    <td class="border px-4 py-2">{{ producto.id_producto }}</td>
+                    <td class="border px-4 py-2">{{ producto.nombre_producto }}</td>
+                    <td class="border px-4 py-2">{{ producto.precio_unitario }}</td>
+                    <td class="border px-4 py-2">
+                        <input type="number" name="cantidad_{{ producto.id_producto }}" min="0" value="0" placeholder="Cantidad del producto a ingresar" class="border rounded w-full p-1 cantidad-input">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <!-- Hidden inputs for product quantities -->
-    <div id="hidden-inputs"></div>
+        <div id="hidden-inputs"></div>
 
-    <button type="submit" class="btn btn-danger" id="crear-venta-cab">
-        CREAR CAB :
-    </button>
-</form>
+        <div class="flex justify-center">
+            <button type="submit" class="btn btn-danger bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">
+                Crear Orden de Venta
+            </button>
+        </div>
+    </form>
+</div>
 
 <script>
 document.getElementById('crear-venta-cab').addEventListener('click', function(event) {
-    // Prevent the default form submission
     event.preventDefault();
 
-    // Clear any existing hidden inputs
     const hiddenInputsContainer = document.getElementById('hidden-inputs');
     hiddenInputsContainer.innerHTML = '';
 
-    // Gather quantities from "Ventas Det"
     document.querySelectorAll('.cantidad-input').forEach(input => {
-        const productId = input.name.split('_')[1]; // Extract the product ID from the name
-        const quantity = input.value; // Get the quantity input value
+        const productId = input.name.split('_')[1];
+        const quantity = input.value;
 
-        // Only add hidden input if quantity is greater than 0
         if (quantity > 0) {
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
@@ -68,7 +68,6 @@ document.getElementById('crear-venta-cab').addEventListener('click', function(ev
         }
     });
 
-    // Submit the form
     document.getElementById('ventas-cab-form').submit();
 });
 </script>

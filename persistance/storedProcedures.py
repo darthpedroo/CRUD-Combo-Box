@@ -73,10 +73,10 @@ class StoredProcedures():
         cursor.close()
         return [Vendedor(*row) for row in results]
 
-    def get_all_ventas_det(self):
+    def get_all_ventas_det(self, id_orden_venta_cab:int):
         cursor = self.connection.cursor()
         cursor.execute(
-            """SELECT * FROM box.ordenventadet ;"""
+           f"""SELECT * FROM box.ordenventadet where idOrdenVenta ={id_orden_venta_cab};"""
         )
         results = cursor.fetchall()
         cursor.close()

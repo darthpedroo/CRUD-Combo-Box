@@ -87,7 +87,8 @@ def single_venta_cab():
         single_venta_cab = ventas_cab.get_orden_venta_cab(venta_id)
         connection = getdb()
         stored_procedures = StoredProcedures(connection)
-        ventas_det = stored_procedures.get_all_ventas_det()
+        id_venta_cab = single_venta_cab[0].id_orden_venta
+        ventas_det = stored_procedures.get_all_ventas_det(id_venta_cab)
         cliente_id = single_venta_cab[0].id_cliente
         tipo_entrega_id = single_venta_cab[0].tipo_entrega
         tipo_pago_id = single_venta_cab[0].tipo_pago
@@ -113,9 +114,14 @@ def crear_orden_venta():
             lista_cantidad = []
             id_cliente = int(request.form["id_cliente"])
             
+            connection = getdb()
+            stored_procedures = StoredProcedures(connection)
+            nombre_cliente = stored_procedures.get_cliente_from_id(id_cliente)[0].razon_social
             
-            productos_clientes = get_productos_clientes_from_nombre(
-                "Fender LLC")
+            
+            productos_clientes = get_productos_clientes_from_nombre(nombre_cliente)
+            print("PRODUCTOS_CLIENTE:", productos_clientes)
+            input("i got a picture im coming with you")
             tipo_entrega = int(request.form["tipo_entrega"])
             tipo_pago = int(request.form["tipo_pago"])
             id_vendedor = int(request.form["id_vendedor"])
@@ -133,47 +139,36 @@ def crear_orden_venta():
             total = 0
             temp_list_of_articles = []
             
-            print("caca", productos_clientes)
-            input("boilerin")
             
             for producto in productos_clientes:
                 print("FORM:", request.form)
                 cantidad = request.form.get(
                     f'cantidad_{producto.id_producto}')
-                print("cantidadaad", cantidad)
-                print("expeted:", f"cantidad_{producto.id_producto}")
-                input("a")
+
                 if cantidad is not None:
                     cantidad = int(cantidad)
                     lista_cantidad.append(cantidad)
-                    
-                    print(cantidad)
-                    input("verga")
+
 
                     if cantidad > 0:
-                        print("cantidad, ", cantidad)
-                        input("maria")
+
                         connection = getdb()
                         stored_procedures = StoredProcedures(connection)
 
                         lista_registros_receta_mats = stored_procedures.get_receta_de_producto(
                             producto.id_producto)
-                        input("boilerin")
+
                         for registro in lista_registros_receta_mats:
                             connection = getdb()
                             stored_procedures = StoredProcedures(connection)
                             if stored_procedures.articulo_esta_disponible(registro, cantidad):
-                                print(registro)
-                                input("boilerin")
+
                                 current_article = (registro, cantidad)
                                 temp_list_of_articles.append(current_article)
                             else:
                                 return render_template("index.html", error="No hay stock para uno o más articulos!!.")
 
             for articulo in temp_list_of_articles:
-                input("maria")
-                print("articulo:", articulo)
-
                 connection = getdb()
                 stored_procedures = StoredProcedures(connection)
                 stored_procedures.add_to_articulos_reservados(
@@ -210,7 +205,9 @@ def crear_orden_venta():
                     print("Error! Index out of range!. Vuelva pronto... no se preocupe!")
                 except Exception as e:
                     print("An error occurred while adding venta_det:", e)
-
+                
+            
+            return redirect(url_for('single_venta_cab', venta_id=id_orden_venta))
 
         except ArithmeticError as ex:
             print("Ex:", ex)
