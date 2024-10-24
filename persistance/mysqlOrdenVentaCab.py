@@ -11,7 +11,7 @@ class MySQLOrdenVentaCab(OrdenVentaCabDao):
     def get_all_orden_venta_cab(self):
         if not self.connection or not self.connection.is_connected():
             print("Connection not available; attempting to reconnect.")
-            self.connection = getdb()  # Re-establish the connection
+            self.connection = getdb()
 
         cursor = self.connection.cursor() # type: ignore
         cursor.execute("SELECT * FROM ordenventacab")
@@ -31,14 +31,12 @@ class MySQLOrdenVentaCab(OrdenVentaCabDao):
         return [OrdenVentaCab(*row) for row in rows] # type: ignore
 
     def create_orden_venta_cab(self, new_orden_venta_cab: OrdenVentaCab):
-        cursor = self.connection.cursor(buffered=True)  # type: ignore Use a buffered cursor
+        cursor = self.connection.cursor(buffered=True)  # type: ignore
 
-        # Debugging: Print the attributes of the object
         print("Attributes of new_orden_venta_cab:")
         for key, value in vars(new_orden_venta_cab).items():
             print(f"{key}: {value}")
 
-        # Execute the insert statement
         cursor.execute(
             """
             INSERT INTO ordenventacab (idOrdenVenta, NumeroOrden, Fecha, FechaEntrega, idVendedor, idCliente, TipoEntrega, TipoPago, Estado, Subtotal, Descuento, Total, Observaciones)

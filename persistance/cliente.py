@@ -24,8 +24,66 @@ class Cliente:
                 f"Tel_1='{self.__Tel_1}', Tel_2='{self.__Tel_2}', Tel_3='{self.__Tel_3}', Correo='{self.__Correo}', "
                 f"UltTrx='{self.__UltTrx}', idUsr='{self.__idUsr}', Estado='{self.__Estado}')")
 
-    def get_id_cliente(self):
+    @property
+    def id_cliente(self):
         return self.__idCliente
 
-    def get_razon_social(self):
+    @property
+    def razon_social(self):
         return self.__RazonSocial
+
+    @property
+    def marca(self):
+        return self.__Marca
+
+    @property
+    def fecha_ingreso(self):
+        return self.__FechaIngreso
+
+    @property
+    def calle(self):
+        return self.__Calle
+
+    @property
+    def calle_nro(self):
+        return self.__CalleNro
+
+    @property
+    def cod_pos(self):
+        return self.__CodPos
+
+    @property
+    def localidad(self):
+        return self.__Localidad
+
+    @property
+    def id_pcia(self):
+        return self.__IdPcia
+
+    @property
+    def tel_1(self):
+        return self.__Tel_1
+
+    @property
+    def tel_2(self):
+        return self.__Tel_2
+
+    @property
+    def tel_3(self):
+        return self.__Tel_3
+
+    @property
+    def correo(self):
+        return self.__Correo
+
+    @property
+    def ult_trx(self):
+        return self.__UltTrx
+
+    @property
+    def id_usr(self):
+        return self.__idUsr
+
+    @property
+    def estado(self):
+        return self.__Estado

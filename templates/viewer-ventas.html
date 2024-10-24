@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+    <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Seleccionar Orden de Venta</h2>
+        <div class="mt-6">
+            <form action="{{ url_for('single_venta_cab') }}" method="GET" id="orden-venta-form">
+                <div class="relative inline-block w-full text-gray-700 dark:text-white">
+                    <select id="orden-venta-dropdown" name="venta_id" class="block appearance-none w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-gray-500 dark:focus:border-gray-400">
+                        <option value="" disabled selected>Selecciona una Orden de Venta</option>
+                        {% for orden in ordenventacab %}
+                            <option value="{{ orden }}">Numero de orden: {{ orden }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-400">
+                        <svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10l5 5 5-5H7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="w-full mt-2 py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:bg-blue-700">
+                        Ver Detalles
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

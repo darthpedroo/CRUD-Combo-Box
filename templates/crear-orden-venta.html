@@ -4,6 +4,7 @@
 
 <h1>Ventas Cab</h1>
 
+<!-- Combine the forms into one -->
 <form action="/crear-orden-venta" method="POST" id="ventas-cab-form">
     <input name="observaciones" placeholder="Ingrese sus observaciones">
     {% include 'productos-clientes.html' %}
@@ -11,16 +12,7 @@
     {% include 'seleccionar-tipo-pago.html' %}
     {% include 'seleccionar-vendedores.html' %}
 
-    <!-- Hidden inputs for product quantities -->
-    <div id="hidden-inputs"></div>
-
-    <button type="submit" class="btn btn-danger" id="crear-venta-cab">
-        CREAR CAB :
-    </button>
-</form>
-
-<h1>Ventas Det:</h1>
-<form id="venta-det-form">
+    <h1>Ventas Det:</h1>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -37,12 +29,19 @@
                 <td>{{ producto.nombre_producto }}</td>
                 <td>{{ producto.precio_unitario }}</td>
                 <td>
-                    <input type="number" name="cantidad_{{ producto.id_producto }}" min="0" value="0" placeholder="Cantidad del producto a ingresar" class="cantidad-input">
+                    <input type="number" name="cantidad_{{producto.id_producto}}" min="0" value="0" placeholder="Cantidad del producto a ingresar" class="cantidad-input">
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Hidden inputs for product quantities -->
+    <div id="hidden-inputs"></div>
+
+    <button type="submit" class="btn btn-danger" id="crear-venta-cab">
+        CREAR CAB :
+    </button>
 </form>
 
 <script>

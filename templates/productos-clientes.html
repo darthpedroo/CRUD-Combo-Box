@@ -1,7 +1,6 @@
-<input type ="hidden" name="id_cliente" placeholder="ingrese el nombre" value="{{productos_clientes[0].id_cliente}}">
-<select name="producto">
-          {% for producto in productos_clientes %}
-            <option value="{{producto.id_producto}}">{{producto.id_producto}}</option>
-          {%endfor%}
+<input type="hidden" name="id_cliente" value="{{productos_clientes[0].id_cliente}}">
+<select name="producto" style="display: none;">
+  {% for producto in productos_clientes %}
+    <option value="{{producto.id_producto}}">{{producto.id_producto}}</option>
+  {%endfor%}
 </select>
-
