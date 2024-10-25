@@ -113,9 +113,12 @@ def single_venta_cab():
         
         return render_template("single-venta-cab.html", single_venta_cab=single_venta_cab, ventas_det=ventas_det, cliente=cliente, tipo_entrega=tipo_entrega, tipo_pago=tipo_pago)
     
-    except Exception:
-        print("No hay suficientes ordenes de ventas!")
-        return redirect(url_for('home'))
+    except Exception as Ex:
+        return render_template('error.html', ex=str(Ex))
+        #print("No hay suficientes ordenes de ventas!")
+
+        
+        #return redirect(url_for('home'))
 
 
 
@@ -180,7 +183,7 @@ def crear_orden_venta():
                                 current_article = (registro, cantidad)
                                 temp_list_of_articles.append(current_article)
                             else:
-                                return render_template("index.html", error="No hay stock para uno o más articulos!!.")
+                                return render_template("error.html", ex="No hay stock para uno o más articulos!", redirect_url="seleccionar_cliente")
 
             for articulo in temp_list_of_articles:
                 connection = getdb()
@@ -216,9 +219,11 @@ def crear_orden_venta():
                         stored_procedures.create_ventas_det(orden_venta_det)
                         print("Added OrdenVentaDet:", orden_venta_det)  # Debug output
                 except IndexError:
-                    print("Error! Index out of range!. Vuelva pronto... no se preocupe!")
+                    return render_template("error.html", ex="Vuelva pronto! No se preocupe.")
+                    #print("Error! Index out of range!. Vuelva pronto... no se preocupe!")
                 except Exception as e:
-                    print("An error occurred while adding venta_det:", e)
+                    return render_template("error.html", ex="Error al agregar detalles a su compra")
+                    #print("An error occurred while adding venta_det:", e)
                 
             
             return redirect(url_for('single_venta_cab', venta_id=id_orden_venta))
