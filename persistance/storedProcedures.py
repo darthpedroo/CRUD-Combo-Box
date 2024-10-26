@@ -9,6 +9,7 @@ from persistance.vendedor import Vendedor
 from persistance.productosCliente import ProductoCliente
 from persistance.RecetaMaterialesProducto import RecetaMaterialesProducto
 from persistance.mysqlordenventadet import OrdenVentaDet
+from persistance.ordenVentaCab import OrdenVentaCab
 
 
 class StoredProcedures():
@@ -102,7 +103,7 @@ class StoredProcedures():
         cursor.close()
         return [RecetaMaterialesProducto(*row) for row in results]
 
-    def add_to_articulos_reservados(self, registro_receta_materiales: RecetaMaterialesProducto, cantidad_articulo_ingresado: int):
+    def add_to_articulos_reservados(self, registro_receta_materiales: RecetaMaterialesProducto, cantidad_articulo_ingresado: int, orden_venta_cab: OrdenVentaCab):
 
         cursor = self.connection.cursor(buffered=True)
 
@@ -114,13 +115,15 @@ class StoredProcedures():
 
         cursor.execute(
             """
-            INSERT INTO articulosreservados (idArticuloReservado, idArticulo, Cantidad, idReceta) VALUES (%s, %s, %s, %s);
+            INSERT INTO articulosreservados (idArticuloReservado, idArticulo, Cantidad, idReceta, idProducto, idOrdenVentaCab) VALUES (%s, %s, %s, %s,%s,%s);
             """,
             (
                 new_id_articulo_reservado,
                 registro_receta_materiales.id_articulo,
                 registro_receta_materiales.cantidad * cantidad_articulo_ingresado,
-                registro_receta_materiales.id_receta_materiales
+                registro_receta_materiales.id_receta_materiales,
+                registro_receta_materiales.id_producto,
+                orden_venta_cab.id_orden_venta
             )
         )
 
