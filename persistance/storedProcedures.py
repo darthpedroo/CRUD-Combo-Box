@@ -169,8 +169,8 @@ class StoredProcedures():
                 orden_venta_det.id_orden_venta_cab,
                 orden_venta_det.id_producto,
                 orden_venta_det.cant,
-                orden_venta_det.precio_unitario,
-                orden_venta_det.importe
+                orden_venta_det.importe,
+                orden_venta_det.precio_unitario
             )
         )
         self.connection.commit()

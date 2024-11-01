@@ -5,7 +5,6 @@ class OrdenVentaDet:
         self.id_producto = id_producto
         self.cant = cant
         self.precio_unitario = precio_unitario
-        # Aquí verificamos el argumento 'importe' pasado al constructor
         if importe is None:
             self.importe = self.cant * self.precio_unitario
         else:

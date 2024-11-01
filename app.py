@@ -16,7 +16,6 @@ app.config['DB_USER'] = 'root'
 app.config['DB_PASSWORD'] = 'i2i0L2aH1'
 app.config['DB_DATABASE'] = 'box'
 
-
 def get_all_clients():
 
     connection = getdb()
@@ -29,25 +28,21 @@ def get_all_clients():
     ]
     return cleaned_results
 
-
 def get_productos_clientes_from_nombre(nombre: str):
 
     stored_procedures_clientes_from_nombre = StoredProcedures(getdb())
     return stored_procedures_clientes_from_nombre.procedure_get_productos_clientes_from_nombre(
         nombre)
 
-
 @app.route("/")
 def home():
     return render_template("index.html")
-
 
 @app.route("/seleccionar-cliente")
 def seleccionar_cliente():
 
     clientes = get_all_clients()
     return render_template("seleccionar-cliente.html", clientes=clientes)
-
 
 @app.route("/productos-cliente", methods=["GET", "POST"])
 def productos_clientes_from_nombre():
@@ -104,7 +99,7 @@ def single_venta_cab():
         return redirect(url_for('home'))
 
     try:
-        venta_id = int(venta_id)  # Convert to int
+        venta_id = int(venta_id)
         ventas_cab = MySQLOrdenVentaCab(getdb())
         single_venta_cab = ventas_cab.get_orden_venta_cab(venta_id)
         connection = getdb()
@@ -123,10 +118,6 @@ def single_venta_cab():
 
     except Exception as Ex:
         return render_template('error.html', ex=str(Ex))
-        # print("No hay suficientes ordenes de ventas!")
-
-        # return redirect(url_for('home'))
-
 
 @app.route("/crear-orden-venta", methods=["GET", "POST"])
 def crear_orden_venta():
@@ -222,15 +213,12 @@ def crear_orden_venta():
                         )
 
                         stored_procedures.create_ventas_det(orden_venta_det)
-                        print("Added OrdenVentaDet:",
-                              orden_venta_det)  # Debug output
+                        print("Added OrdenVentaDet:", orden_venta_det)
                 except IndexError as Ex:
                     print(Ex)
                     return render_template("error.html", ex="Vuelva pronto! No se preocupe.")
-                    # print("Error! Index out of range!. Vuelva pronto... no se preocupe!")
                 except Exception as e:
                     return render_template("error.html", ex="Error al agregar detalles a su compra")
-                    # print("An error occurred while adding venta_det:", e)
 
             return redirect(url_for('single_venta_cab', venta_id=id_orden_venta))
 
