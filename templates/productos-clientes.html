@@ -1,6 +1,9 @@
+
 <input type="hidden" name="id_cliente" value="{{productos_clientes[0].id_cliente}}">
 <select name="producto" style="display: none;">
   {% for producto in productos_clientes %}
     <option value="{{producto.id_producto}}">{{producto.id_producto}}</option>
   {%endfor%}
 </select>
+
+
